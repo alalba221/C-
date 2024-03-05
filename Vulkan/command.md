@@ -80,3 +80,24 @@ There is a new level of complexity to Vulkan, that didn’t really exist in Open
 The pools simplify deletion of many resources that were allocated from them at once and they also ensure allocations can be done lock-free by using per-thread pools. For example one can use a different CommandBufferPool per-frame and create all temporary CommandBuffers from it. After a few frames when all these CommandBuffers have been completed by the GPU, the pool can be reset and new temporaries generated from it.
 
 Memory management also allows for greater control and new use-cases such as aliasing memory. A memory allocation is rather costly and some operating systems also have fixed overhead for how many allocations are active at once. We therefore encourage developers to sub-allocate resources from larger chunks of memory.
+
+## Command
+
+所有Command的功能可以分为：
+
+- Perform Actions
+- Set State
+- Perform Synchronizations
+
+| Action            | Set State                      | Synchronization         |
+| ----------------- | ------------------------------ | ----------------------- |
+| Draw              | Bind Pipeline                  | Set/Wait Events         |
+| Dispatch          | Bind Descriptor Sets           | Pipeline Barrier        |
+| Clear             | Bind Buffers                   | Render Pass Dependencis |
+| Copy              | Set Dynamic State              | Sub Pass Dependencis    |
+| Query/Timestamp   | *Push Constants                |                         |
+| Begin/End Subpass | Set Render Pass/Sub Pass State |                         |
+
+Action Command会经历多个 pipeline state。
+
+会执行的哪些Pipeline Stage取决于所使用的特定Command以及Record Command时的当前Command Buffer状态。而且针对不同的Command还会有这一些特定的Pipeline Stage，有些同步Command会包含Pipeline Stage参数将该Command的同步范围限制在这些Pipeline Stage内
