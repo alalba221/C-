@@ -30,6 +30,35 @@ Alternatively for a compute pipeline in Vulkan, you need:
 
 ![image-20240303124453141](figures/image-20240303124453141.png)
 
+### Pipeline stages and render passes
+
+In render passes there are two “families” of pipeline stages, those which concern themselves with **geometry** processing, and the **fragment** family, which does rasterization / frame buffer operations.
+
+###### Geometry
+
+- DRAW_INDIRECT – Parses indirect buffers
+- VERTEX_INPUT – Consumes fixed function VBOs and IBOs
+- VERTEX_SHADER – Actual vertex shader
+- TESSELLATION_CONTROL_SHADER
+- TESSELLATION_EVALUATION_SHADER
+- GEOMETRY_SHADER
+
+###### Fragment
+
+- EARLY_FRAGMENT_TESTS
+  - This is the stage where early depth/stencil tests happen
+  - This is also where a render pass performs its **loadOp of a depth/stencil attachment.**
+- FRAGMENT_SHADER
+- LATE_FRAGMENT_TESTS
+  - This is where late depth-stencil tests take place, and also where **depth-stencil attachments are stored** with **storeOp** when a render pass is done.
+- COLOR_ATTACHMENT_OUTPUT
+  - This one is where loadOp, storeOp, MSAA resolves and frame buffer blend stage takes place, basically **anything which touches a color attachment in a render pass** in some way
+  -  If you’re waiting for a render pass which uses color to be complete, use srcStageMask = COLOR_ATTACHMENT_OUTPUT, and similar for dstStageMask when blocking render passes from execution.
+
+
+
+
+
 ## Graphics Pipeline Library Overview
 
 ### Vertex Input Interface
